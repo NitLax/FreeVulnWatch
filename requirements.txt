@@ -1,0 +1,4 @@
+requests
+tqdm
+import re
+requests_html

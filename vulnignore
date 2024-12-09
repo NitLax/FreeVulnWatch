@@ -1,0 +1,23 @@
+Vulnerabilities that we sould ignore
+CVE-2024-23898 - Patched with 2024-23897
+CVE-2024-20272 - Patched with 2024-20253
+CVE-2024-23213 - Patched with 2024-23222
+CVE-2024-23214 - Patched with 2024-23222
+CVE-2024-0517 - Patched with 2024-0519
+CVE-2024-0518 - Pached with 2024-0519
+CVE-2024-25140 - False positive : not in Tech stack
+CVE-2024-24482 - False positive : not in Tech stack
+CVE-2024-1059 - Patched in patch tuesday Feb 2024 ?
+CVE-2024-1060 - Patched in patch tuesday Feb 2024 ?
+CVE-2024-25089 - False positive
+CVE-2024-23113 - Patched with CVE-2023-48788
+CVE-2024-25699 - False Positive : Not in Tech stack
+CVE-2024-20259 - Patchedd with other CIscos
+CVE-2024-31988 - False positive : Not in Tech stack
+CVE-2024-36081 - False Positive : Not in Tech stack
+CVE-2024-29895 - False positive : Not in Tech stack
+CVE-2024-45032 - False Positive : Not in Tech stack
+CVE-2024-40710 - Fasle Positive : Patched with CVE-2024-40711
+CVE-2024-38226 - Patched in patch tuesday Sep 2024
+CVE-2024-8986 - Out of Scope
+CVE-2024-45256 - out of scope
