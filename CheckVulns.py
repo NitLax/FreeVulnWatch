@@ -8,8 +8,6 @@ import datetime
 from requests_html import HTMLSession
 import argparse
 
-session =  HTMLSession()
-
 parser = argparse.ArgumentParser(
                     prog='FreeVulnWatch',
                     description='Analyses the CVEs in the file included in the parameters and gives and select the ones interesting'
@@ -26,15 +24,17 @@ print(args.filters)
     
 PATH = os.getcwd()
 
+# Load js on the web page url
 def get_content_of_js_page(url):
+    session =  HTMLSession()
     response = session.get(url)
     response.html.render()
+    session.close()
     return(response.html.html)
     
-
+# Regex to get the CVSS score and risk from the NVD page content
 def get_CVSS_from_NVD(nvdcontent):
     regex = r"(\d\.?\d?) ([A-Z]{3,8})<\/a>"
-    # regex = r"<article class=\"book\"><span class=\"number\">\#(\d)</span><img src=\".*?\" alt=\"(.*?)\">"
     found = re.findall(regex,nvdcontent)
     if found == []:
         res = "Product not Found"
@@ -42,7 +42,7 @@ def get_CVSS_from_NVD(nvdcontent):
         res = found[0]
     return res
 
-#Fonction qui recupère l'integralité de la page NVD de la CVE en paramètre 
+# Regex to get the CWE from the NVD page content
 def get_CWE_from_NVD(nvdcontent):
     found = re.findall(r'\"vuln\-CWEs\-link\-\d\"\>(.+)\<',nvdcontent)
     res = ""
@@ -52,6 +52,7 @@ def get_CWE_from_NVD(nvdcontent):
         res = found[-1]
     return res
 
+# Regex to get the description from the NVD page content
 def get_description_from_NVD(nvdcontent):
     regex = r"<p data\-testid=\"vuln\-description\">(.*?)<\/p>"
     try :
@@ -62,26 +63,39 @@ def get_description_from_NVD(nvdcontent):
         # sys.exit(-1)
     return description
 
+# Regex to get the exploitation state ad exploit url from inthewild.io
 def get_exploitation_state_from_inthewild(cve):
     url = "https://inthewild.io/vuln/"+cve
     inthewildcontent = requests.get(url).text
     regex = r"<dt class=\"css-yv1hg8\">Type\:<\/dt><dd class=\"css\-gwpoux\">(.*?)<\/dd>"
     exploitlink = ""
-    try :
-        exploitstate = list(set(re.findall(regex,inthewildcontent)))
-        exploitation = "exploitation" in exploitstate
-        exploitlink = "exploit" in exploitstate
-        if re.findall(r"class=\"chakra\-link css\-14ttpe2\" href=\"https\:\/\/www\.cisa\.gov\/known\-exploited\-vulnerabilities\-catalog\">",inthewildcontent)!=[]:
-            exploitation = "in CISA KEV"
-        if exploitlink:
-            exploitlink = re.findall(r"<dd class=\"css\-gwpoux\">exploit<.*?Reference url to background.*?href=(.*?)>",inthewildcontent)[0]
-        else:
-            exploitlink=""
-        exploitstate = (exploitation,exploitlink)
-    except IndexError:
-        exploitstate = "Unknown"
+    exploitstate = list(set(re.findall(regex,inthewildcontent)))
+    if "exploitation" in exploitstate:
+        exploitation = "Exploited"
+    else:
+        exploitation = "No Exploitation Known"
+    exploitlink = "exploit" in exploitstate
+    if re.findall(r"class=\"chakra\-link css\-14ttpe2\" href=\"https\:\/\/www\.cisa\.gov\/known\-exploited\-vulnerabilities\-catalog\">",inthewildcontent)!=[]:
+        exploitation = "in CISA KEV"
+    if exploitlink:
+        exploitlink = re.findall(r"<dd class=\"css\-gwpoux\">exploit<.*?Reference url to background.*?href=(.*?)>",inthewildcontent)[0]
+    else:
+        exploitlink=""
+    exploitstate = (exploitation,exploitlink)
     return exploitstate
-    
+
+def get_vulnerable_product_from_cpe(nvdcontent):
+    res = []
+    regex = r"<b data-testid=\"vuln\-software\-cpe\-\d\-\d\-\d\">.*?&nbsp;cpe.*?\:[a-z_][a-z_]+\:([a-z_][a-z_]+)\:.*?</b>"
+    cpes = list(set(re.findall(regex,nvdcontent)))
+    for cpe in cpes:
+        res.append(cpe.replace('_',' ').capitalize())
+    return res
+    # cpe = "cpe%3A2.3%3Aa%3Awebmproject%3Alibwebp%3A*%3A*%3A*%3A*%3A*%3A*%3A*%3A*"
+    # url="https://nvd.nist.gov/products/cpe/search/results?namingFormat=2.3&keyword="+cpe
+            
+    # print(cpes)
+    # url = "https://nvd.nist.gov/products/cpe/search/results?namingFormat=2.3&keyword=cpe%3A2.3%3Aa%3Aveeam%3Aveeam_backup_%5C%26_replication%3A*%3A*%3A*%3A*%3A*%3A*%3A*%3A*"
 
 def get_vulnerable_product_from_vulmon(cve):
     url = "https://vulmon.com/vulnerabilitydetails?qid="+cve
@@ -145,7 +159,6 @@ def get_techstack():
     return sorted(techstack,key=lambda k:len(k))
 
 vulns = list(set(get_vuln_in_file(THEFILE,FILTERS)))
-print(vulns)
 
 with open("vulnignore","r") as f:
     vulnignore = list_this_year_cve(f.read(),FILTERS)
@@ -165,24 +178,32 @@ print("Gathering data over those CVEs ...")
 for cve in tqdm(vulns):
     iter = 0
     nvdcontent = get_content_of_js_page("https://nvd.nist.gov/vuln/detail/"+cve)
+    affected_products = get_vulnerable_product_from_cpe(nvdcontent)
     exploitstate = get_exploitation_state_from_inthewild(cve)
     cvss = get_CVSS_from_NVD(nvdcontent)
-    oui = {
-        'cve_id': cve,
-        'CVSS':float(cvss[0]),
-        'risk':cvss[1],
-        'CWE':get_CWE_from_NVD(nvdcontent),
-        'nvd_description':get_description_from_NVD(nvdcontent),
-        'exploitation_state':exploitstate[0],
-        'exploit_link':exploitstate[1]
-        # 'affected_product':get_affected_products_from_cveorg(cve)
-    }
+    try :
+        oui = {
+                'cve_id': cve,
+                'CVSS':float(cvss[0]),
+                'risk':cvss[1],
+                'CWE':get_CWE_from_NVD(nvdcontent),
+                'nvd_description':get_description_from_NVD(nvdcontent),
+                'exploitation_state':exploitstate[0],
+                'exploit_link':exploitstate[1],
+                'affected_product':affected_products
+                # 'affected_product':get_affected_products_from_cveorg(cve)
+            }
+    except ValueError:
+        print(cve)
+        cvss = 0
     product = check_technos_in_description(techstack,oui['nvd_description'])
 
     advisorySent = IsAdvisorySent(cve,advisories)
     
     if FILTERS:
-        interestingCVE = not advisorySent and ('note' in oui.keys() and oui['note']>=5) and product in techstack and cve not in vulnignore
+        if oui['exploit_link']!="" : print("exploit ",cve)
+        interestingCVE = (not advisorySent and (oui['CVSS']>=5 or oui['exploit_link']!="" or oui['exploitation_state']!="No Exploitation Known") and product in techstack and cve not in vulnignore)
+        print(interestingCVE)
     else:
         interestingCVE = True
     
