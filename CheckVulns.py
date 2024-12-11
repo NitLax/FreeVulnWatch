@@ -149,13 +149,28 @@ def check_technos_in_description(techstack, description):
             res = tech
     return res
 
+def check_technos_in_cpes(techstack, affected_products):
+    res = False
+    for cpe in affected_products:
+        res = res or cpe.lower() in techstack
+    return res 
+
+def str_cpes(affected_products):
+    res = "" 
+    for product in affected_products:
+        res+=f",\n{product}"
+    if len(affected_products)==1: res = "The product affected is:"+res[2:]+"\n"
+    else: res = "The products affected are:"+res[2:]+"\n"
+    if len(affected_products)==0: res = ""
+    return res
+
 def get_techstack():
     techstack=[]
     with open("technos",'r') as technobuffer:
         techstack = technobuffer.readlines()
     technobuffer.close()
     for i in range(len(techstack)):
-        techstack[i] = techstack[i][:-1]
+        techstack[i] = techstack[i][:-1].lower()
     return sorted(techstack,key=lambda k:len(k))
 
 vulns = list(set(get_vuln_in_file(THEFILE,FILTERS)))
@@ -196,14 +211,21 @@ for cve in tqdm(vulns):
     except ValueError:
         print(cve)
         cvss = 0
-    product = check_technos_in_description(techstack,oui['nvd_description'])
+    
+    #if one of the cpes match the one in technos
+    # if check_technos_in_cpes(techstack,affected_products):
+        
+    # print(affected_products)
+    if affected_products == []:
+        product = check_technos_in_description(techstack,oui['nvd_description'])
+    else :
+        product = affected_products[0]
 
     advisorySent = IsAdvisorySent(cve,advisories)
     
     if FILTERS:
-        if oui['exploit_link']!="" : print("exploit ",cve)
+        # if oui['exploit_link']!="" : print("exploit ",cve)
         interestingCVE = (not advisorySent and (oui['CVSS']>=5 or oui['exploit_link']!="" or oui['exploitation_state']!="No Exploitation Known") and product in techstack and cve not in vulnignore)
-        print(interestingCVE)
     else:
         interestingCVE = True
     
@@ -211,7 +233,7 @@ for cve in tqdm(vulns):
         if product not in prod_obj.keys():
             prod_obj[product]=[]
         try :
-            prod_obj[product].append({"cve":cve,"score":oui['CVSS'],"description":oui['nvd_description'],"cwe":oui['CWE'],"exploitation":oui["exploitation_state"],"exploit_link":oui["exploit_link"]})
+            prod_obj[product].append({"cve":cve,"score":oui['CVSS'],"description":oui['nvd_description'],"cwe":oui['CWE'],"exploitation":oui["exploitation_state"],"exploit_link":oui["exploit_link"],"products":str_cpes(affected_products)})
         except KeyError:
             print(json.dumps(oui,indent=4))
             sys.exit(-2)
@@ -219,10 +241,9 @@ for cve in tqdm(vulns):
 str_res = ""
 for techno in prod_obj:
     prod_obj[techno] = sorted(prod_obj[techno],key=lambda k:k["score"],reverse=True)
-    print("\n",techno.upper(),":\n\n")
     str_res += "\n"+techno.upper()+":\n\n"
     for cve in prod_obj[techno]:
-        str_res+=f"{cve['cve']} ({cve['score']}) - {cve['cwe']} [ {cve['exploitation']} ]\n{cve['description']}\n"
+        str_res+=f"{cve['cve']} ({cve['score']}) - {cve['cwe']} [ {cve['exploitation']} ]\n{cve['products']}{cve['description']}\n"
         if cve["exploit_link"]!="":
             str_res += f"POC: {cve['exploit_link']}\n\n"
         else:
