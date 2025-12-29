@@ -6,13 +6,14 @@ A Python module for gathering vulnerability intelligence from multiple sources w
 
 - **OOP Design**: `Vulnerability` class encapsulates all CVE data
 - **Extensible Architecture**: Easy to add new scrapers with decorator pattern
-- **Multiple Data Sources**: CVE.org, NVD, Wiz (easily add more)
+- **Multiple Data Sources**: CVE.org, NVD, Wiz, Vulmon (easily add more)
 - **Smart Data Merging**: Intelligently combines data from multiple sources
 - **Caching**: File-based caching to avoid redundant API calls
 - **Priority Scoring**: Calculate risk scores based on CVSS, EPSS, and lifecycle
 - **Multiple Export Formats**: JSON, CSV, Markdown, STIX 2.1
 - **Batch Processing**: Process multiple CVEs from a file
 - **CLI Interface**: Full-featured command-line tool
+- **Microsoft KB Mapping**: Dedicated tool to map CVEs to Microsoft Knowledge Base IDs
 
 ## Installation
 
@@ -84,6 +85,7 @@ python openSourceVulnIntelligence.py --clear-cache
 - `cveorg` - CVE.org official API (priority 10)
 - `nvd` - National Vulnerability Database (priority 10)
 - `wiz` - Wiz vulnerability database with EPSS data (priority 5)
+- `vulmon` - Vulmon vulnerability database with exploit info (priority 5)
 
 ### File Format for Batch Processing
 
@@ -174,6 +176,18 @@ For users who prefer the original script-based approach, `CheckVulns.py` is stil
 
 ```bash
 python CheckVulns.py --filename vulns.txt --filters True
+```
+
+### KB Mapping Utility (`cve2kb.py`)
+
+Fetch Microsoft KB IDs for specific CVEs using the MSRC API.
+
+```bash
+# Single CVE lookup
+python cve2kb.py CVE-2024-38063
+
+# Batch processing
+python cve2kb.py --file cve_list.txt --json
 ```
 
 ## License

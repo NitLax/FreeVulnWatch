@@ -8,6 +8,7 @@ from .registry import ScraperRegistry, register_scraper, get_registry
 from .cveorg import CVEOrgScraper
 from .nvd import NVDScraper
 from .wiz import WizScraper
+from .vulmon import VulmonScraper
 
 __all__ = [
     'BaseScraper',
@@ -16,5 +17,6 @@ __all__ = [
     'get_registry',
     'CVEOrgScraper',
     'NVDScraper',
-    'WizScraper'
+    'WizScraper',
+    'VulmonScraper'
 ]
