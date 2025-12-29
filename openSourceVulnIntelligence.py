@@ -1,475 +1,264 @@
-import requests
-import re
-import json
-from bs4 import BeautifulSoup
+#!/usr/bin/env python3
+"""
+Command-line interface for openSourceVulnIntelligence.
+
+Usage:
+    python openSourceVulnIntelligence.py CVE-2024-1234
+    python openSourceVulnIntelligence.py --file cve_list.txt
+    python openSourceVulnIntelligence.py --file cve_list.txt --output results.json --format json
+"""
 import sys
-import cloudscraper
-from collections import OrderedDict
-import datetime
-import html
+import argparse
+import json
+import csv
+from pathlib import Path
+from typing import List
+
+# Import the module
+try:
+    from openSourceVulnIntelligence import (
+        get_vulnerability,
+        get_vulnerabilities,
+        read_cves_from_file,
+        get_cache
+    )
+except ImportError:
+    # If running as script, add parent directory to path
+    sys.path.insert(0, str(Path(__file__).parent))
+    from openSourceVulnIntelligence import (
+        get_vulnerability,
+        get_vulnerabilities,
+        read_cves_from_file,
+        get_cache
+    )
 
 
-# class Vulnerability:
-#     def __init__(self,cve_id):
-#         self.cve_id = cve_id,
-#         self.cwe = None,
-#         self.cvss = None,
-#         self.score = None,
-#         self.epss = None,
-#         self.lifecycle = None,
-#         
-self.date
-_published = None,
-#         self.affected = None,
-#         self.mitigation = None,
+def display_vulnerability(vuln, format_type: str = "text"):
+    """Display vulnerability in specified format."""
+    if format_type == "text":
+        print("\n" + "=" * 80)
+        print(vuln.display())
+        print("=" * 80)
         
-# res_to_get = {
-#     'cve_id':'',
-#     'cwe':'',
-#     'cvss':'',
-#     'epss':'',
-#     'lifecycle':"Exploitation Unknown|Disclosure|Exploitation available|Added to CISA KEV",
-#     'date_published':'',
-#     'description':'',
-#     'affected':{vendor:[{product,affected_version,fix}]},
-#     'mitigation':'',
-#     'urls':[],
-#     'exploit':[]|None
-# }
-
-def get_vendors(vuln_item):
-    if vuln_item['affected']==None: return []
-    return vuln_item['affected'].keys()
-
-def IsInCISAKEV(cve_id):
-    url = f"
-https://cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
-"
-    response = requests.get(url)
-    response.raise_for_status()
-    data = response.json()
-    return len(re.findall(cve_id,str(data)))>0
-
-# def get_products(vuln_item):
-#     if vuln_item['affected']==None: return []
-#     return [item['product'] for item in vendor for vendor in vuln_item{affected}.keys()]
-
-def itemCrawler(items,keys,value):
-    # return [item for item in items if item.get(keys[0])==value]
-    # res = []
-    # for item in items:
-    if len(keys)==1:
-        return [item for item in items if item.get(keys[0])==value]
-    if len(keys)==2:
-        return [item for item in items if item.get(keys[0]).get(keys[1])==value]
-
-def get_mitre_cwe_name(cwe_id):
-    cwe = None
-    if cwe_id == None: return None
-    url = f"https://cwe.mitre.org/data/definitions/{cwe_id}.html"
-    response = requests.get(url)
-    response.raise_for_status()
-    data = response.text
-    list_cwe = re.findall(f'CWE\-{cwe_id}\:\s(.*?)\<\/h2\>',data)
-    if len(list_cwe)>0 : cwe = list_cwe[0]
-    return cwe 
-
-def unescape(str):
-    if str == None:
-        return None
-    else:
-        return html.unescape(str)
+        if vuln.affected:
+            print("\nAffected Products:")
+            for vendor, products in vuln.affected.items():
+                print(f"  {vendor}:")
+                # Deduplicate products by name for display
+                seen_products = set()
+                for product_info in products:
+                    product = product_info.get('product', 'Unknown')
+                    if product not in seen_products:
+                        print(f"    - {product}")
+                        seen_products.add(product)
+        
+        if vuln.exploit:
+            print(f"\nExploits Available: {len(vuln.exploit)}")
+            for exploit_url in vuln.exploit[:3]:  # Show first 3
+                print(f"  - {exploit_url}")
+        
+        print(f"\nPriority Score: {vuln.calculate_priority_score()}/10")
+        print()
     
-#vulmon,wiz,inthewild,exploitdb,vulners?,nvd
+    elif format_type == "json":
+        print(vuln.to_json())
+    
+    elif format_type == "markdown":
+        print(vuln.to_markdown())
 
-def cveorgScraper(cve):
-    # url = f"https://cve.org/CVERecord?id={cve}"
-    url = f"https://cveawg.mitre.org/api/cve/{cve}"
-    response = requests.get(url)
-    response.raise_for_status()
-    data = response.json()
 
-    def extract_cwe(api: dict) -> str:
-        try:
-            containers = api.get("containers", {})
+def save_results(vulnerabilities: List, output_file: str, format_type: str):
+    """Save results to file."""
+    output_path = Path(output_file)
+    
+    if format_type == "json":
+        data = [vuln.to_dict() for vuln in vulnerabilities]
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        print(f"\nResults saved to {output_file}")
+    
+    elif format_type == "csv":
+        with open(output_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            # Header
+            writer.writerow([
+                'CVE ID', 'CWE', 'CVSS', 'EPSS', 'Lifecycle',
+                'Date Published', 'Description', 'Vendors', 'Products',
+                'Exploit Count', 'Priority Score'
+            ])
+            # Data
+            for vuln in vulnerabilities:
+                writer.writerow(vuln.to_csv_row())
+        print(f"\nResults saved to {output_file}")
+    
+    elif format_type == "markdown":
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write("# Vulnerability Intelligence Report\n\n")
+            f.write(f"Total CVEs analyzed: {len(vulnerabilities)}\n\n")
+            f.write("---\n\n")
+            for vuln in vulnerabilities:
+                f.write(vuln.to_markdown())
+                f.write("\n---\n\n")
+        print(f"\nResults saved to {output_file}")
 
-            # --- Check CNA first ---
-            cna_problems = containers.get("cna", {}).get("problemTypes", [])
-            for pt in cna_problems:
-                for desc in pt.get("descriptions", []):
-                    if "cweId" in desc:
-                        return desc["description"]
 
-            # --- Fallback: Check ADP ---
-            adp_entries = containers.get("adp", [])
-            for entry in adp_entries:
-                for pt in entry.get("problemTypes", []):
-                    for desc in pt.get("descriptions", []):
-                        if "cweId" in desc:
-                            return desc["description"]
-
-            return None
-        except Exception:
-            return None
-
-    def extract_cvss(api: dict) -> float:
-        try:
-            containers = api.get("containers", {})
-            all_metrics = []
-
-            # Collect metrics from both CNA and ADP if present
-            cna_metrics = containers.get("cna", {}).get("metrics", [])
-            adp_entries = containers.get("adp", [])
-            adp_metrics = []
-            for entry in adp_entries:
-                adp_metrics.extend(entry.get("metrics", []))
-
-            all_metrics.extend(cna_metrics)
-            all_metrics.extend(adp_metrics)
-
-            priority = ["cvssV4_0", "cvssV3_1", "cvssV3_0", "cvssV2_0"]
-
-            for level in priority:
-                for metric in all_metrics:
-                    if level in metric:
-                        data = metric[level]
-                        score = data.get("baseScore")
-                        if isinstance(score, (int, float)):
-                            return score
-            return 0
-        except Exception:
-            return 0
+def main():
+    """Main CLI entry point."""
+    parser = argparse.ArgumentParser(
+        description="Open Source Vulnerability Intelligence Tool",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Single CVE lookup
+  python openSourceVulnIntelligence.py CVE-2024-1234
+  
+  # Batch processing from file
+  python openSourceVulnIntelligence.py --file cve_list.txt
+  
+  # Save results to JSON
+  python openSourceVulnIntelligence.py --file cve_list.txt --output results.json
+  
+  # Use specific scrapers only (space-separated)
+  python openSourceVulnIntelligence.py CVE-2024-1234 --scrapers nvd cveorg
+  
+  # Use specific scrapers only (comma-separated)
+  python openSourceVulnIntelligence.py CVE-2024-1234 --scrapers nvd,cveorg
+  
+  # Clear cache
+  python openSourceVulnIntelligence.py --clear-cache
+        """
+    )
+    
+    # Positional argument for single CVE
+    parser.add_argument(
+        'cve_id',
+        nargs='?',
+        help='CVE identifier (e.g., CVE-2024-1234)'
+    )
+    
+    # File input
+    parser.add_argument(
+        '--file', '-f',
+        help='File containing CVE IDs (one per line, supports comments with #)'
+    )
+    
+    # Output options
+    parser.add_argument(
+        '--output', '-o',
+        help='Output file path'
+    )
+    
+    parser.add_argument(
+        '--format',
+        choices=['text', 'json', 'csv', 'markdown'],
+        default='text',
+        help='Output format (default: text)'
+    )
+    
+    # Scraper selection
+    parser.add_argument(
+        '--scrapers', '-s',
+        nargs='*',
+        metavar='SCRAPER',
+        help='Scraper(s) to use (space-separated). Available: wiz, nvd, cveorg. Examples: --scrapers nvd cveorg OR --scrapers nvd,cveorg'
+    )
+    
+    # Cache options
+    parser.add_argument(
+        '--no-cache',
+        action='store_true',
+        help='Disable caching'
+    )
+    
+    parser.add_argument(
+        '--clear-cache',
+        action='store_true',
+        help='Clear all cached data'
+    )
+    
+    args = parser.parse_args()
+    
+    # Handle cache clearing
+    if args.clear_cache:
+        cache = get_cache()
+        cache.clear()
+        print("Cache cleared successfully.")
+        return 0
+    
+    # Validate input
+    if not args.cve_id and not args.file:
+        parser.print_help()
+        print("\nError: Either provide a CVE ID or use --file to specify a file.")
+        return 1
+    
+    # Parse scrapers
+    scrapers = None
+    if args.scrapers:
+        # args.scrapers is now a list due to nargs='*'
+        # Handle both: --scrapers nvd cveorg (list) and --scrapers nvd,cveorg (comma in first element)
+        if len(args.scrapers) == 1 and ',' in args.scrapers[0]:
+            # Comma-separated in single string
+            scrapers = [s.strip() for s in args.scrapers[0].split(',')]
+        else:
+            # Space-separated (already a list)
+            scrapers = [s.strip() for s in args.scrapers]
         
-    def extract_lifecycle(api: dict) -> str:
-        try:
-            containers = api.get("containers", {})
-
-            # --- Check for CISA KEV in ADP timeline ---
-            adp_entries = containers.get("adp", [])
-            for adp in adp_entries:
-                for tl in adp.get("timeline", []):
-                    if "CISA KEV" in tl.get("value", "").upper():
-                        return "Added to CISA KEV"
-                for ref in adp.get('references',[]):
-                    if "cisa.gov/known-exploited-vulnerabilities-catalog" in ref.get('url',''):
-                        return "Added to CISA KEV"
-                for metric in adp.get("metrics", []):
-                    print(metric.get("other",{}).get("type", "").upper())
-                    if "KEV" in metric.get("other",{}).get("type", "").upper():
-                        return "Added to CISA KEV"
-                
-            # --- Check for exploit or PoC indicators in references ---
-            references = containers.get("cna", {}).get("references", [])
-            for ref in references:
-                tags = [t.lower() for t in ref.get("tags", [])]
-                if any(tag in tags for tag in ["exploit", "poc", "proof-of-concept", "issue-tracking"]):
-                    return "Exploitation available"
-
-            # --- Check for ADP metrics exploitation hints ---
-            for adp in adp_entries:
-                for metric in adp.get("metrics", []):
-                    content = metric.get("other", {}).get("content", {})
-                    if isinstance(content, dict):
-                        for opt in content.get("options", []):
-                            if "Exploitation" in opt and opt["Exploitation"].lower() in ["poc", "active"]:
-                                return "Exploitation available"
-
-            # --- If CVE has publication date but no exploit ---
-            if api.get("cveMetadata", {}).get("datePublished"):
-                return "Disclosure"
-
-            # --- 5️⃣ Default fallback ---
-            return None
-
-        except Exception:
-            return None
-        
-    def extract_affected(api: dict) -> dict:
-        affected_data = {}
-
-        try:
-            affected_entries = api.get("containers", {}).get("cna", {}).get("affected", [])
-            for entry in affected_entries:
-                vendor = entry.get("vendor", "Unknown Vendor").strip()
-                product = entry.get("product", "Unknown Product").strip()
-                versions = entry.get("versions", [])
-
-                affected_versions = []
-                fixed_versions = []
-
-                for ver in versions:
-                    status = ver.get("status", "").lower()
-                    version = ver.get("version")
-                    if not version:
-                        continue
-                    if status == "affected":
-                        affected_versions.append(version)
-                    elif status in ["fixed", "patched", "unaffected"]:
-                        fixed_versions.append(version)
-
-                product_entry = {
-                    "product": product,
-                    "affected_versions": affected_versions,
-                    "fixed_versions": fixed_versions
-                }
-
-                # Append under vendor key
-                if vendor not in affected_data:
-                    affected_data[vendor] = []
-                affected_data[vendor].append(product_entry)
-
-            return affected_data or {}
-
-        except Exception:
-            return {}
-        
-    def extract_date_published(api: dict) -> str:
-        try:
-            return api.get("cveMetadata", {}).get("datePublished", "")
-        except Exception:
-            return ""
-
-    def extract_description(api: dict) -> str:
-        try:
-            descs = api.get("containers", {}).get("cna", {}).get("descriptions", [])
-            # Prefer 'en-US' first
-            for lang in ["en-US", "en"]:
-                for d in descs:
-                    if d.get("lang") == lang and d.get("value"):
-                        return d["value"]
-            # Fallback: first available
-            if descs:
-                return descs[0].get("value", "")
-            return ""
-        except Exception:
-            return ""
+        # Validate scraper names
+        from openSourceVulnIntelligence import get_registry
+        registry = get_registry()
+        available = registry.get_scraper_names()
+        invalid = [s for s in scrapers if s not in available]
+        if invalid:
+            print(f"Warning: Unknown scraper(s): {', '.join(invalid)}")
+            print(f"Available scrapers: {', '.join(available)}")
+            scrapers = [s for s in scrapers if s in available]
+            if not scrapers:
+                print("Error: No valid scrapers specified.")
+                return 1
+    
+    # Process CVEs
+    try:
+        if args.file:
+            # Batch processing
+            print(f"Reading CVEs from {args.file}...")
+            cve_ids = read_cves_from_file(args.file)
+            print(f"Found {len(cve_ids)} CVE(s): {', '.join(cve_ids)}\n")
             
-    def extract_urls(api: dict) -> list:
-        urls = []
-        try:
-            references = api.get("containers", {}).get("cna", {}).get("references", [])
-            for ref in references:
-                url = ref.get("url")
-                if not url:
-                    continue
-                tags = [t.lower() for t in ref.get("tags", [])]
-                # Skip PoC/exploit/issue-tracking
-                if any(tag in ["exploit", "poc", "proof-of-concept", "issue-tracking"] for tag in tags):
-                    continue
-                if url not in urls:
-                    urls.append(url)
-            return urls
-        except Exception:
-            return []
-
-    def extract_exploits(api: dict) -> list:
-        exploits = []
-        try:
-            references = api.get("containers", {}).get("cna", {}).get("references", [])
-            for ref in references:
-                url = ref.get("url")
-                if not url:
-                    continue
-                tags = [t.lower() for t in ref.get("tags", [])]
-                if any(tag in ["exploit", "poc", "proof-of-concept", "issue-tracking"] for tag in tags):
-                    if url not in exploits:
-                        exploits.append(url)
-            return exploits if exploits else None
-        except Exception:
-            return None
-    res = {
-        'cve_id':cve,
-        'cwe':extract_cwe(data),
-        'cvss':extract_cvss(data),
-        'epss':None,
-        'lifecycle':extract_lifecycle(data),
-        'date_published':extract_date_published(data),
-        'description':extract_description(data),
-        'affected':extract_affected(data),
-        'urls':extract_urls(data),
-        'exploit':extract_exploits(data)
-    }
-    return res
-
-def wizScraper(cve):
-    # url = f"https://cve.org/CVERecord?id={cve}"
-    url = f"https://www.wiz.io/vulnerability-database/cve/{cve.lower()}"
-    response = requests.get(url)
-    response.raise_for_status()
-    data = response.text
-    soup = BeautifulSoup(data,'html.parser')
-    text = soup.get_text(" ",strip=True)
-    
-    def extract_cvss(text: str) -> float:
-        try:
-            # Look for things like "CVSS 9.8" or "CVSS Score: 7.5"
-            matches = re.findall(r"CVSS[^0-9]*([0-9]+(?:\.[0-9]+)?)", text, re.IGNORECASE)
-            scores = [float(s) for s in matches if 0.0 <= float(s) <= 10.0]
-            return max(scores) if scores else 0.0
-        except Exception:
-            return 0.0
-    
-    res = {
-        'cve_id':cve,
-        'cwe':None,
-        'cvss':extract_cvss(data),
-    #     'epss':'n/a',
-    #     'lifecycle':extract_lifecycle(data),
-    #     'date_published':extract_date_published(data),
-    #     'description':extract_description(data),
-    #     'affected':extract_affected(data),
-    #     'urls':extract_urls(data),
-    #     'exploit':extract_exploits(data)
-    }
-    return res
-
-def nvdapiScraper(cve):
-    # url = f"https://cveawg.mitre.org/api/cve/{cve}"
-    url = f"https://services.nvd.nist.gov/rest/json/cves/2.0?cveId={cve}"
-    response = requests.get(url)
-    response.raise_for_status()
-    data = response.json()
-
-    def extract_cwe_id(api):
-        cwe_id = None
-        try : 
-            weaknesses = api.get('vulnerabilities',{})[0].get('cve',{}).get('weaknesses',[])
-        except IndexError: return None
-        cwe_ids = list(set(re.findall(r"CWE\-(\d+)",str(weaknesses))))
-        if len(cwe_ids)>0 : cwe_id = cwe_ids[-1]
-        return cwe_id
-        
-    def extract_cvss(api):
-        cvss = None
-        try : 
-            metrics =  api.get('vulnerabilities',{})[0].get('cve',{}).get('metrics',{})
-            latestcvssversion = [cvssV for cvssV in metrics.keys() if str(cvssV).startswith('cvssMetricV')][0]
-            cvss = metrics[latestcvssversion][0].get('cvssData',{}).get('baseScore',None)
-        except IndexError: return None
-        return cvss
-    
-    def extract_lifecycle(api):
-        if IsInCISAKEV(cve):
-            return "Added to CISA KEV"
-        try :
-            references =  api.get('vulnerabilities',{})[0].get('cve',{}).get('references',[])
-            # tags = [ref.get("tags", '').lower() for ref in references]
-            tags = [tag.lower() for ref in references for tag in ref.get('tags',[])]
-            urls = [ref.get('url',"") for ref in references]
-            if any(tag in tags for tag in ["exploit", "poc", "proof-of-concept", "issue-tracking"]):
-                return "Exploitation available"
-            if any(word in urli for urli in urls for word in ["exploit", "poc", "proof-of-concept", "issue-tracking","writeups","sploit","packetstormsecurity"]):
-                return "Exploitation available"
-            if 'published' in api.get('vulnerabilities',{})[0].get('cve',{}).keys():
-                return "Disclosure"
-        except IndexError:
-            return None
-    
-    def extract_date_published(data):
-        try :
-            res = data.get('vulnerabilities')[0].get('cve',{}).get('published',None)
-        except IndexError:
-            return None
-        if res != None:
-            res=res[:-4]+'Z'
-        return res
-    
-    def extract_description(data):
-        try :
-            descriptions = data.get('vulnerabilities')[0].get('cve',{}).get('descriptions',[])
-            english_description_list = itemCrawler(descriptions,['lang'],'en')
-            if len(english_description_list)>0:
-                res = english_description_list[0].get('value',None)
+            vulnerabilities = get_vulnerabilities(
+                cve_ids,
+                scrapers=scrapers,
+                use_cache=not args.no_cache
+            )
+            
+            # Display or save results
+            if args.output:
+                save_results(vulnerabilities, args.output, args.format)
             else:
-                return None
-        except IndexError:
-            return None
-        return res
-    
-    def extract_affected(data):
-        res = {}
-        try :
-            cpes = data.get('vulnerabilities')[0].get('cve',{}).get('configurations',[])[0].get('nodes',[])[0].get('cpeMatch',[])
-            for cpe in cpes:
-                criteria = cpe.get('criteria')
-                vendor = criteria.split(':')[3].replace('_',' ').capitalize()
-                product = criteria.split(':')[4].replace('_',' ').capitalize()
-                vfix = cpe.get('versionEndExcluding',None)
-                vaffected = f'before {vfix}' if vfix else None
-                item = {'product':product,'affected_version':vaffected,'fixed_versions':vfix}
-                if vendor in res:
-                    res[vendor].append(item)
-                else:
-                    res[vendor] = [item]
-        except IndexError:
-            return None
-        return res        
+                for vuln in vulnerabilities:
+                    display_vulnerability(vuln, args.format)
         
-    def extract_urls(data):
-        try :
-            references =  data.get('vulnerabilities',{})[0].get('cve',{}).get('references',[])
-            return [ref.get('url',None) for ref in references]
-        except IndexError:
-            return None
-    
-    def extract_exploit(data):
-        all_exploit_url = None
-        try :
-            exploit_tagged_url = []
-            exploit_worded_url = []
-            references =  data.get('vulnerabilities',{})[0].get('cve',{}).get('references',[])
-            exploit_tagged_url = []
-            for ref in references:
-                if any(tag.lower() in [lowertag.lower() for lowertag in ref.get('tags',[])] for tag in ["exploit", "poc", "proof-of-concept", "issue-tracking"]):
-                    exploit_tagged_url.append(ref.get('url',None))
-                if any(word in ref.get('url','') for word in ["exploit", "poc", "proof-of-concept","proofofconcept", "issue-tracking","writeups","sploit","packetstormsecurity"]) and '
-cisa.gov
-' not in ref.get('url',''):
-                    exploit_worded_url.append(ref.get('url',None))
-            all_exploit_url = list(set(exploit_tagged_url + exploit_worded_url))
-            # urls = [ref.get('url','') for ref in references]
-            # if any(word in urli for urli in urls for word in ["exploit", "poc", "proof-of-concept", "issue-tracking","writeups","sploit","packetstormsecurity"]):
-            #     return "Exploitation available"
-            # print(exploit_tagged_url)
-        except IndexError:
-            return None
-        return all_exploit_url
+        else:
+            # Single CVE
+            vuln = get_vulnerability(
+                args.cve_id,
+                scrapers=scrapers,
+                use_cache=not args.no_cache
+            )
+            
+            # Display or save results
+            if args.output:
+                save_results([vuln], args.output, args.format)
+            else:
+                display_vulnerability(vuln, args.format)
         
-    res = {
-        'cve_id':cve,
-        'cwe':unescape(get_mitre_cwe_name(extract_cwe_id(data))),
-        'cvss':extract_cvss(data),
-        'epss':None,
-        'lifecycle':extract_lifecycle(data),
-        'date_published':extract_date_published(data),
-        'description':extract_description(data),
-        'affected':extract_affected(data),
-        'urls':extract_urls(data),
-        'exploit':extract_exploit(data)
-    }
-    return res
+        return 0
     
+    except Exception as e:
+        print(f"\nError: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
+        return 1
 
-
-
-def display_vuln(vuln_item):
-    return f"{vuln_item['cve_id']} ({vuln_item['cvss']}) - {vuln_item['cwe']} [{vuln_item['lifecycle']}]\n{vuln_item['description']}"
 
 if __name__ == "__main__":
-    if len(sys.argv)<1 or not sys.argv[1].startswith('CVE-'):
-        print("Need CVE ID arg")
-    else:
-        cve = str(sys.argv[1]).upper()
-    oui = cveorgScraper(cve)
-    # oui = wizScraper(cve)
-
-    print(json.dumps(oui,indent=4))
-    
-    non = nvdapiScraper(cve)
-    print(json.dumps(non,indent=4))
-    # print(display_vuln(oui))
-    # oui = vulmonScrapper(cve)
-    # print("Affected Techs:")
-    # print(oui["affectedTechs"])
-    # print("Mitigations and workarounds:")
-    # print(oui["mitigationAndWorkarounds"])
+    sys.exit(main())
