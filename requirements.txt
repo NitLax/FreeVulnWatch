@@ -1,4 +1,4 @@
 requests
 tqdm
-import re
+beautifulsoup4
 requests_html

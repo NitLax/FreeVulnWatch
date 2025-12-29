@@ -17,7 +17,7 @@ A Python module for gathering vulnerability intelligence from multiple sources w
 ## Installation
 
 ```bash
-pip install beautifulsoup4 requests
+pip install -r requirements.txt
 ```
 
 ## Usage
@@ -60,9 +60,24 @@ python openSourceVulnIntelligence.py CVE-2024-1234 --scrapers nvd,cveorg,wiz
 # Export to CSV
 python openSourceVulnIntelligence.py --file cve_list.txt --output report.csv --format csv
 
+# Disable caching
+python openSourceVulnIntelligence.py CVE-2024-1234 --no-cache
+
 # Clear cache
 python openSourceVulnIntelligence.py --clear-cache
 ```
+
+### CLI Reference
+
+| Argument | Shorthand | Description | Default |
+| :--- | :--- | :--- | :--- |
+| `cve_id` | *(positional)* | Single CVE identifier (e.g., `CVE-2024-1234`). | None |
+| `--file` | `-f` | Path to file containing CVE IDs (one per line). | None |
+| `--output` | `-o` | Path to save the results. | None (prints to stdout) |
+| `--format` | | Output format: `text`, `json`, `csv`, or `markdown`. | `text` |
+| `--scrapers` | `-s` | Space or comma-separated list of scrapers to use. | All available |
+| `--no-cache` | | Disable reading from and writing to the local cache. | `False` |
+| `--clear-cache` | | Delete all locally cached vulnerability data and exit. | `False` |
 
 ### Available Scraper Codenames
 
@@ -152,6 +167,14 @@ openSourceVulnIntelligence/
 - `get_vulnerabilities(cve_ids, scrapers=None, use_cache=True)` - Get multiple vulnerabilities
 - `get_registry()` - Get scraper registry
 - `get_cache()` - Get cache instance
+
+## Legacy Scripts
+
+For users who prefer the original script-based approach, `CheckVulns.py` is still available. It provides a quick way to analyze a file containing CVEs and filter them according to a predefined tech stack (`technos` file).
+
+```bash
+python CheckVulns.py --filename vulns.txt --filters True
+```
 
 ## License
 
