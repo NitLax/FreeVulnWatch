@@ -1,0 +1,1021 @@
+[
+  {
+    "cve_id": "CVE-2025-14847",
+    "cwe": "Improper Handling of Length Parameter Inconsistency",
+    "cvss": 8.7,
+    "epss": 12.3,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-12-19T00:00:00Z",
+    "description": "A vulnerability exists in MongoDB Server affecting multiple versions from v3.6.0 to v8.2.3. The issue involves mismatched length fields in Zlib compressed protocol headers that can potentially allow an unauthenticated client to read uninitialized heap memory. The vulnerability spans a wide range of MongoDB Server versions, including v7.0 prior to 7.0.28, v8.0 prior to 8.0.17, v8.2 prior to 8.2.3, v6.0 prior to 6.0.27, v5.0 prior to 5.0.32, v4.4 prior to 4.4.30, and versions v4.2.0 and higher, v4.0.0 and higher, and v3.6.0 and higher. This vulnerability could potentially expose sensitive memory information to an unauthenticated remote client through improper handling of compressed protocol headers.",
+    "affected": {
+      "MongoDB Inc.": [
+        {
+          "product": "MongoDB Server",
+          "affected_versions": [
+            "8.2",
+            "8.0",
+            "7.0",
+            "6.0",
+            "5.0",
+            "4.4",
+            "4.2",
+            "4.0",
+            "3.6"
+          ],
+          "fixed_versions": []
+        }
+      ],
+      "Mongodb": [
+        {
+          "product": "Inc. mongodb server",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://jira.mongodb.org/browse/SERVER-115508",
+      "https://cwe.mitre.org/data/definitions/130.html",
+      "https://nvd.nist.gov",
+      "https://www.bleepingcomputer.com/news/security/mongodb-warns-admins-to-patch-severe-rce-flaw-immediately/",
+      "https://github.com/Neo23x0/mongobleed-detector",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [
+      "https://github.com/Neo23x0/mongobleed-detector",
+      "https://github.com/cybertechajju/CVE-2025-14847_Expolit",
+      "https://github.com/joe-desimone/mongobleed",
+      "https://github.com/ProbiusOfficial/CVE-2025-14847",
+      "https://github.com/Black1hp/mongobleed-scanner",
+      "https://github.com/saereya/CVE-2025-14847---MongoBleed",
+      "https://github.com/Ashwesker/Blackash-CVE-2025-14847",
+      "https://github.com/JemHadar/MongoBleed-DFIR-Triage-Script-CVE-2025-14847-",
+      "https://github.com/franksec42/mongobleed-exploit-CVE-2025-14847",
+      "https://github.com/lincemorado97/CVE-2025-14847",
+      "https://github.com/JemHadar/MongoBleed-DFIR-Triage-Script-CVE-2025-14847",
+      "https://github.com/kuyrathdaro/cve-2025-14847",
+      "https://github.com/AmDumDee/global-threat-intel",
+      "https://github.com/UK-Cyber-Defence/Pulse-Rules",
+      "https://github.com/Ashwesker/Ashwesker-CVE-2025-14847",
+      "https://github.com/14mb1v45h/CYBERDUDEBIVASH-MONGODB-DETECTOR-v2026",
+      "https://github.com/chinaxploiter/CVE-2025-14847-PoC",
+      "https://github.com/Security-Phoenix-demo/mongobleed-exploit-CVE-2025-14847",
+      "https://github.com/gotr00t0day/MongoBleed",
+      "https://github.com/ob1sec/mongobleeder"
+    ],
+    "priority_score": 8.37,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-14300",
+    "cwe": "Missing Authentication for Critical Function",
+    "cvss": 8.7,
+    "epss": 0.00048,
+    "lifecycle": "Disclosure",
+    "date_published": "2025-12-20T00:00:00Z",
+    "description": "The HTTPS service on Tapo C200 V3 camera has a security weakness in its connectAP interface. This interface can be accessed without requiring authentication. An attacker who is on the same local network can modify the device's Wi-Fi settings. This can cause the camera to lose network connectivity and potentially create a denial-of-service condition.",
+    "affected": {
+      "TP-Link Systems Inc.": [
+        {
+          "product": "Tapo C200 V3",
+          "affected_versions": [
+            "0"
+          ],
+          "fixed_versions": []
+        }
+      ],
+      "Tp-link": [
+        {
+          "product": "Systems inc. tapo c200 v3",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://www.tp-link.com/us/support/download/tapo-c200/v3/#Firmware-Release-Notes",
+      "https://www.tp-link.com/us/support/faq/4849/",
+      "https://cwe.mitre.org/data/definitions/306.html",
+      "https://nvd.nist.gov",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [],
+    "priority_score": 2.0,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-68730",
+    "cwe": null,
+    "cvss": 3.1,
+    "epss": 3.1,
+    "lifecycle": "Disclosure",
+    "date_published": "2025-12-24T00:00:00Z",
+    "description": "A vulnerability in the Linux kernel's accel/ivpu component has been addressed through a fix in the ivpu_bo_unbind_all_bos_from_context() function. The issue stems from adding a buffer object (BO) to the vdev->bo_list during ivpu_gem_create_object(). When a failure occurs within drm_gem_shmem_create(), the buffer object is not completely created, and the ivpu_gem_bo_free() callback will not be executed. This can result in a deleted buffer object remaining on the list, potentially causing page fault issues in the kernel's memory management.",
+    "affected": {
+      "Linux": [
+        {
+          "product": "Linux",
+          "affected_versions": [
+            "8d88e4cdce4f5c56de55174a4d32ea9c06f7fa66",
+            "8d88e4cdce4f5c56de55174a4d32ea9c06f7fa66",
+            "8d88e4cdce4f5c56de55174a4d32ea9c06f7fa66"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "Linux",
+          "affected_versions": [
+            "6.8"
+          ],
+          "fixed_versions": [
+            "0",
+            "6.17.13",
+            "6.18.2",
+            "6.19-rc1"
+          ]
+        },
+        {
+          "product": "Linux",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Linux kernel",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://git.kernel.org/stable/c/8172838a284c27190fa6782c2740a97020434750",
+      "https://git.kernel.org/stable/c/c9ef5ccd8bd9bcf598b6d3f77e7eb4dde7149aec",
+      "https://git.kernel.org/stable/c/8b694b405a84696f1d964f6da7cf9721e68c4714",
+      "https://nvd.nist.gov",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [],
+    "priority_score": 2.09,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-15194",
+    "cwe": "Stack-based Buffer Overflow",
+    "cvss": 9.8,
+    "epss": null,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-12-29T00:00:00Z",
+    "description": "A vulnerability exists in D-Link DIR-600 firmware versions up to 2.15WWb02 involving the hedwig.cgi file within the HTTP Header Handler component. The vulnerability allows remote attackers to trigger a stack-based buffer overflow by manipulating the Cookie argument. An exploit for this issue has been publicly disclosed and could potentially be used against unsupported D-Link router products. The vulnerability specifically impacts network devices that are no longer receiving security updates from the manufacturer.",
+    "affected": {
+      "D-Link": [
+        {
+          "product": "DIR-600",
+          "affected_versions": [
+            "2.15WWb02"
+          ],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://vuldb.com/?id.338581",
+      "https://vuldb.com/?ctiid.338581",
+      "https://vuldb.com/?submit.724404",
+      "https://github.com/LonTan0/CVE/blob/main/Stack-Based%20Buffer%20Overflow%20Vulnerability%20in%20hedwig.cgi%20of%20D-Link%20DIR-600.md",
+      "https://www.dlink.com/",
+      "https://github.com/LonTan0/CVE/blob/main/Stack-Based%20Buffer%20Overflow%20Vulnerability%20in%20hedwig.cgi%20of%20D-Link%20DIR-600.md#poc",
+      "https://cwe.mitre.org/data/definitions/119.html",
+      "https://cwe.mitre.org/data/definitions/121.html",
+      "https://nvd.nist.gov"
+    ],
+    "exploit": [
+      "https://github.com/LonTan0/CVE/blob/main/Stack-Based%20Buffer%20Overflow%20Vulnerability%20in%20hedwig.cgi%20of%20D-Link%20DIR-600.md#poc"
+    ],
+    "priority_score": 8.0,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-68461",
+    "cwe": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+    "cvss": 7.2,
+    "epss": 18.0,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-12-18T00:00:00Z",
+    "description": "Roundcube Webmail versions prior to 1.5.12 and 1.6 versions before 1.6.12 have a Cross-Site-Scripting (XSS) vulnerability. This security issue exists through the animate tag within an SVG document. The vulnerability allows a malicious user to potentially inject harmful scripts into the web application, which could compromise user interactions and data security.",
+    "affected": {
+      "Roundcube": [
+        {
+          "product": "Webmail",
+          "affected_versions": [
+            "0",
+            "1.6.0"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "Webmail",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://roundcube.net/news/2025/12/13/security-updates-1.6.12-and-1.5.12",
+      "https://github.com/roundcube/roundcubemail/commit/bfa032631c36b900e7444dfa278340b33cbf7cdb",
+      "https://cwe.mitre.org/data/definitions/79.html",
+      "https://nvd.nist.gov",
+      "https://github.com/rxerium/CVE-2025-68461",
+      "https://seclists.org/oss-sec/2025/q4/293",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [
+      "https://github.com/rxerium/CVE-2025-68461",
+      "https://github.com/gotr00t0day/CVE-2025-68461",
+      "https://vulmon.com/exploitdetails?qidtp=maillist_oss_security&qid=2c69f9e2939ff7fda3bf6dece4a50d47"
+    ],
+    "priority_score": 8.54,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-68331",
+    "cwe": null,
+    "cvss": 5.7,
+    "epss": 5.7,
+    "lifecycle": "Disclosure",
+    "date_published": "2025-12-22T00:00:00Z",
+    "description": "In the Linux kernel, the following vulnerability has been resolved:\n\nusb: uas: fix urb unmapping issue when the uas device is remove during ongoing data transfer\n\nWhen a UAS device is unplugged during data transfer, there is\na probability of a system panic occurring. The root cause is\nan access to an invalid memory address during URB callback handling.\nSpecifically, this happens when the dma_direct_unmap_sg() function\nis called within the usb_hcd_unmap_urb_for_dma() interface, but the\nsg->dma_address field is 0 and the sg data structure has already been\nfreed.\n\nThe SCSI driver sends transfer commands by invoking uas_queuecommand_lck()\nin uas.c, using the uas_submit_urbs() function to submit requests to USB.\nWithin the uas_submit_urbs() implementation, three URBs (sense_urb,\ndata_urb, and cmd_urb) are sequentially submitted. Device removal may\noccur at any point during uas_submit_urbs execution, which may result\nin URB submission failure. However, some URBs might have been successfully\nsubmitted before the failure, and uas_submit_urbs will return the -ENODEV\nerror code in this case. The current error handling directly calls\nscsi_done(). In the SCSI driver, this eventually triggers scsi_complete()\nto invoke scsi_end_request() for releasing the sgtable. The successfully\nsubmitted URBs, when being unlinked to giveback, call\nusb_hcd_unmap_urb_for_dma() in hcd.c, leading to exceptions during sg\nunmapping operations since the sg data structure has already been freed.\n\nThis patch modifies the error condition check in the uas_submit_urbs()\nfunction. When a UAS device is removed but one or more URBs have already\nbeen successfully submitted to USB, it avoids immediately invoking\nscsi_done() and save the cmnd to devinfo->cmnd array. If the successfully\nsubmitted URBs is completed before devinfo->resetting being set, then\nthe scsi_done() function will be called within uas_try_complete() after\nall pending URB operations are finalized. Otherwise, the scsi_done()\nfunction will be called within uas_zap_pending(), which is executed after\nusb_kill_anchored_urbs().\n\nThe error handling only takes effect when uas_queuecommand_lck() calls\nuas_submit_urbs() and returns the error value -ENODEV . In this case,\nthe device is disconnected, and the flow proceeds to uas_disconnect(),\nwhere uas_zap_pending() is invoked to call uas_try_complete().",
+    "affected": {
+      "Linux": [
+        {
+          "product": "Linux",
+          "affected_versions": [
+            "eb2a86ae8c544be0ab04aa8169390c0669bc7148",
+            "eb2a86ae8c544be0ab04aa8169390c0669bc7148",
+            "eb2a86ae8c544be0ab04aa8169390c0669bc7148",
+            "eb2a86ae8c544be0ab04aa8169390c0669bc7148",
+            "eb2a86ae8c544be0ab04aa8169390c0669bc7148",
+            "eb2a86ae8c544be0ab04aa8169390c0669bc7148",
+            "eb2a86ae8c544be0ab04aa8169390c0669bc7148"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "Linux",
+          "affected_versions": [
+            "5.10"
+          ],
+          "fixed_versions": [
+            "0",
+            "5.10.247",
+            "5.15.197",
+            "6.1.159",
+            "6.6.119",
+            "6.12.61",
+            "6.17.11",
+            "6.18"
+          ]
+        },
+        {
+          "product": "Linux",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Linux kernel",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://git.kernel.org/stable/c/6289fc489e94c9beb6be2b502ccc263663733d72",
+      "https://git.kernel.org/stable/c/66ac05e7b0d6bbd1bee9fcf729e20fd4cce86d17",
+      "https://git.kernel.org/stable/c/75f8e2643085db4f7e136fc6b368eb114dd80a64",
+      "https://git.kernel.org/stable/c/e3a55221f4de080cb7a91ba10f01c4f708603f8d",
+      "https://git.kernel.org/stable/c/2b90a8131c83f6f2be69397d2b7d14d217d95d2f",
+      "https://git.kernel.org/stable/c/426edbfc88b22601ea34a441a469092e7b301c52",
+      "https://git.kernel.org/stable/c/26d56a9fcb2014b99e654127960aa0a48a391e3c",
+      "https://nvd.nist.gov",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [],
+    "priority_score": 2.17,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-12934",
+    "cwe": "Missing Authorization",
+    "cvss": 8.1,
+    "epss": 7.3,
+    "lifecycle": "Disclosure",
+    "date_published": "2025-12-23T00:00:00Z",
+    "description": "The Beaver Builder WordPress Page Builder plugin has a vulnerability in the 'duplicate_wpml_layout' function across all versions up to 2.9.4.1. This security issue allows authenticated attackers with Subscriber-level access or higher to improperly access and modify posts. Specifically, attackers can update posts with content from other existing posts, which could potentially expose private or password-protected content. The vulnerability is limited to posts originally created using Beaver Builder, and it enables unauthorized users to copy or update such posts, potentially leading to content deletion if the posts are not saved in revisions or backups.",
+    "affected": {
+      "beaverbuilder": [
+        {
+          "product": "Beaver Builder Page Builder – Drag and Drop Website Builder",
+          "affected_versions": [
+            "*"
+          ],
+          "fixed_versions": []
+        }
+      ],
+      "Beaverbuilder": [
+        {
+          "product": "Beaver builder page builder – drag and drop website builder",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/bc2db74d-61b9-498a-a0d8-e43466b06f37?source=cve",
+      "https://plugins.trac.wordpress.org/browser/beaver-builder-lite-version/trunk/classes/class-fl-builder-model.php#L181",
+      "https://plugins.trac.wordpress.org/browser/beaver-builder-lite-version/trunk/classes/class-fl-builder-model.php#L5490",
+      "https://plugins.trac.wordpress.org/changeset/3425646/beaver-builder-lite-version/trunk",
+      "https://cwe.mitre.org/data/definitions/862.html",
+      "https://nvd.nist.gov",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [],
+    "priority_score": 2.22,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-14800",
+    "cwe": "Unrestricted Upload of File with Dangerous Type",
+    "cvss": 8.1,
+    "epss": 11.5,
+    "lifecycle": "Disclosure",
+    "date_published": "2025-12-21T00:00:00Z",
+    "description": "The Redirection for Contact Form 7 WordPress plugin contains a security weakness that allows unauthenticated attackers to upload files without proper validation. In versions up to and including 3.2.7, the 'move_file_to_upload' function lacks file type checks, enabling malicious users to copy arbitrary files to the server. When the 'allow_url_fopen' setting is enabled, attackers can potentially upload remote files, posing a significant risk to the website's security.",
+    "affected": {
+      "themeisle": [
+        {
+          "product": "Redirection for Contact Form 7",
+          "affected_versions": [
+            "*"
+          ],
+          "fixed_versions": []
+        }
+      ],
+      "Themeisle": [
+        {
+          "product": "Redirection for contact form 7",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/b249ec90-a364-4644-94fb-d42eb6cc4d9a?source=cve",
+      "https://plugins.trac.wordpress.org/changeset/3423970/wpcf7-redirect",
+      "https://plugins.trac.wordpress.org/browser/wpcf7-redirect/tags/3.2.7/classes/class-wpcf7r-save-files.php#L180",
+      "https://cwe.mitre.org/data/definitions/434.html",
+      "https://nvd.nist.gov",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [],
+    "priority_score": 2.35,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-50526",
+    "cwe": "Improper Neutralization of Special Elements used in a Command ('Command Injection')",
+    "cvss": 9.8,
+    "epss": 0.00287,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-12-23T00:00:00Z",
+    "description": "Netgear EX8000 V1.0.0.126 exists to contain a command injection vulnerability via the switch_status function.",
+    "affected": {
+      "n/a": [
+        {
+          "product": "n/a",
+          "affected_versions": [
+            "n/a"
+          ],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://github.com/JZP018/vuln03/blob/main/netgear/EX8000/cve-netgear_EX8000_CI_switch_status.pdf",
+      "https://github.com/JZP018/vuln03/blob/main/netgear/EX8000/netgear_EX8000_CI_switch_status.mp4",
+      "https://cwe.mitre.org/data/definitions/77.html",
+      "https://nvd.nist.gov",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [],
+    "priority_score": 8.0,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-14861",
+    "cwe": "Improper Restriction of Operations within the Bounds of a Memory Buffer",
+    "cvss": 8.8,
+    "epss": 13.0,
+    "lifecycle": "Disclosure",
+    "date_published": "2025-12-18T00:00:00Z",
+    "description": "A memory safety vulnerability exists in Firefox versions prior to 146.0.1. The browser contains multiple memory safety bugs that potentially could lead to memory corruption. These bugs suggest the possibility of arbitrary code execution if an attacker develops a sophisticated enough approach. The vulnerability impacts all Firefox versions below 146.0.1, presenting a significant security risk to users of the web browser.",
+    "affected": {
+      "Mozilla": [
+        {
+          "product": "Firefox",
+          "affected_versions": [
+            "unspecified"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "Firefox",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://bugzilla.mozilla.org/buglist.cgi?bug_id=1996570%2C1999700",
+      "https://www.mozilla.org/security/advisories/mfsa2025-98/",
+      "https://cwe.mitre.org/data/definitions/119.html",
+      "https://nvd.nist.gov",
+      "https://www.mozilla.org/en-US/security/advisories/mfsa2025-98/",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [],
+    "priority_score": 2.39,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-29970",
+    "cwe": "Use After Free",
+    "cvss": 7.8,
+    "epss": 22.6,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-05-13T00:00:00Z",
+    "description": "Use after free in Microsoft Brokering File System allows an authorized malicious user to elevate privileges locally.",
+    "affected": {
+      "Microsoft": [
+        {
+          "product": "Windows Server 2025 (Server Core installation)",
+          "affected_versions": [
+            "10.0.26100.0"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "Windows Server 2022, 23H2 Edition (Server Core installation)",
+          "affected_versions": [
+            "10.0.25398.0"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "Windows 11 Version 24H2",
+          "affected_versions": [
+            "10.0.26100.0"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "Windows Server 2025",
+          "affected_versions": [
+            "10.0.26100.0"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "Windows 11 24h2",
+          "affected_versions": [
+            "before 10.0.26100.4061"
+          ],
+          "fixed_versions": [
+            "10.0.26100.4061"
+          ]
+        },
+        {
+          "product": "Windows server 2022 23h2",
+          "affected_versions": [
+            "before 10.0.25398.1611"
+          ],
+          "fixed_versions": [
+            "10.0.25398.1611"
+          ]
+        },
+        {
+          "product": "Windows server 2025",
+          "affected_versions": [
+            "before 10.0.26100.4061"
+          ],
+          "fixed_versions": [
+            "10.0.26100.4061"
+          ]
+        },
+        {
+          "product": "Windows server 2025 (server core installation)",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Windows server 2022, 23h2 edition (server core installation)",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Windows 11 version 24h2",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Windows server 2025",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Windows server 23h2",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Windows 11 24h2",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Windows server 2022 23h2",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29970",
+      "https://cwe.mitre.org/data/definitions/416.html",
+      "https://nvd.nist.gov",
+      "https://www.bleepingcomputer.com/news/microsoft/microsoft-may-2025-patch-tuesday-fixes-5-exploited-zero-days-72-flaws/",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [],
+    "priority_score": 8.68,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-68645",
+    "cwe": "Improper Control of Filename for Include/Require Statement in PHP Program ('PHP Remote File Inclusion')",
+    "cvss": 8.8,
+    "epss": 0.00087,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-12-22T00:00:00Z",
+    "description": "A Local File Inclusion (LFI) vulnerability exists in the Webmail Classic UI of Zimbra Collaboration (ZCS) 10.0 and 10.1 due to improper handling of user-supplied request parameters in the RestFilter servlet. An unauthenticated remote attacker can craft requests to the /h/rest endpoint to manipulate internal request dispatching, which enables the inclusion of arbitrary files from the WebRoot directory.",
+    "affected": {
+      "n/a": [
+        {
+          "product": "n/a",
+          "affected_versions": [
+            "n/a"
+          ],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://wiki.zimbra.com/wiki/Security_Center",
+      "https://wiki.zimbra.com/wiki/Zimbra_Responsible_Disclosure_Policy",
+      "https://cwe.mitre.org/data/definitions/98.html",
+      "https://nvd.nist.gov",
+      "https://github.com/Ashwesker/Blackash-CVE-2025-68645",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [
+      "https://github.com/Ashwesker/Blackash-CVE-2025-68645"
+    ],
+    "priority_score": 8.0,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-14659",
+    "cwe": "Improper Neutralization of Special Elements used in a Command ('Command Injection')",
+    "cvss": 8.8,
+    "epss": 0.00243,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-12-14T00:00:00Z",
+    "description": "A vulnerability was detected in D-Link DIR-860LB1 and DIR-868LB1 203b01/203b03. Affected is an unknown function of the component DHCP Daemon. The manipulation of the argument Hostname results in command injection. It is possible to launch the attack remotely. The exploit is now public and may be used.",
+    "affected": {
+      "D-Link": [
+        {
+          "product": "DIR-860LB1",
+          "affected_versions": [
+            "203b01",
+            "203b03"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "DIR-868LB1",
+          "affected_versions": [
+            "203b01",
+            "203b03"
+          ],
+          "fixed_versions": []
+        }
+      ],
+      "D-link": [
+        {
+          "product": "Dir-860lb1",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Dir-868lb1",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://vuldb.com/?id.336391",
+      "https://vuldb.com/?ctiid.336391",
+      "https://vuldb.com/?submit.713701",
+      "https://vuldb.com/?submit.714709",
+      "https://tzh00203.notion.site/D-Link-DIR-860LB1-v203b03-Command-Injection-in-DHCPd-2c6b5c52018a807eab1ae73dbd95eee3?source=copy_link",
+      "https://www.dlink.com/",
+      "https://tzh00203.notion.site/D-Link-DIR-868LB1-v203b01-Command-Injection-in-DHCPd-2c8b5c52018a805296c3dea51a7a4070?source=copy_link",
+      "https://cwe.mitre.org/data/definitions/74.html",
+      "https://cwe.mitre.org/data/definitions/77.html",
+      "https://nvd.nist.gov",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [
+      "https://tzh00203.notion.site/D-Link-DIR-868LB1-v203b01-Command-Injection-in-DHCPd-2c8b5c52018a805296c3dea51a7a4070?source=copy_link"
+    ],
+    "priority_score": 8.0,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-43865",
+    "cwe": "Insufficient Verification of Data Authenticity",
+    "cvss": 8.2,
+    "epss": 16.5,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-04-25T00:00:00Z",
+    "description": "React Router is a router for React. In versions on the 7.0 branch prior to version 7.5.2, it's possible to modify pre-rendered data by adding a header to the request. This allows to completely spoof its contents and modify all the values ​​of the data object passed to the HTML. This issue has been patched in version 7.5.2.",
+    "affected": {
+      "remix-run": [
+        {
+          "product": "react-router",
+          "affected_versions": [
+            ">= 7.0, < 7.5.2"
+          ],
+          "fixed_versions": []
+        }
+      ],
+      "Remix-run": [
+        {
+          "product": "React-router",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://github.com/remix-run/react-router/security/advisories/GHSA-cpj6-fhp6-mr6j",
+      "https://github.com/remix-run/react-router/commit/c84302972a152d851cf5dd859ff332b354b70111",
+      "https://github.com/remix-run/react-router/blob/e6c53a0130559b4a9bd47f9cf76ea5b08a69868a/packages/react-router/lib/server-runtime/routes.ts#L87",
+      "https://cwe.mitre.org/data/definitions/345.html",
+      "https://nvd.nist.gov",
+      "https://advisories.checkpoint.com/defense/advisories/public/2025/cpai-2025-0254.html",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [],
+    "priority_score": 8.49,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-13941",
+    "cwe": "Incorrect Permission Assignment for Critical Resource",
+    "cvss": 8.8,
+    "epss": 1.2,
+    "lifecycle": "Disclosure",
+    "date_published": "2025-12-19T00:00:00Z",
+    "description": "A local privilege escalation vulnerability has been discovered in Foxit PDF Reader/Editor Update Service. The issue stems from incorrect file system permissions assigned during plugin installation. These improper permissions allow a local attacker with low-level access to modify or replace critical resources used by the update service. By manipulating these resources, an attacker could potentially execute arbitrary code and gain SYSTEM-level privileges, which represents a significant security risk for the application.",
+    "affected": {
+      "Foxit Software Inc.": [
+        {
+          "product": "Foxit PDF Reader",
+          "affected_versions": [
+            "Versions 2025.2.1 and earlier",
+            "Versions 14.0.1 and earlier",
+            "Versions 13.2.1 and eariler"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "Foxit PDF Editor",
+          "affected_versions": [
+            "Versions 2025.2.1 and earlier",
+            "Versions 14.0.1 and earlier",
+            "Versions 13.2.1 and eariler"
+          ],
+          "fixed_versions": []
+        }
+      ],
+      "Foxit": [
+        {
+          "product": "Pdf editor",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Pdf reader",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Software inc. foxit pdf reader",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Software inc. foxit pdf editor",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ],
+      "Microsoft": [
+        {
+          "product": "Windows",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://www.foxit.com/support/security-bulletins.html",
+      "https://cwe.mitre.org/data/definitions/732.html",
+      "https://nvd.nist.gov",
+      "https://www.zerodayinitiative.com/advisories/ZDI-25-1173/",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [],
+    "priority_score": 2.04,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-47273",
+    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+    "cvss": 8.8,
+    "epss": 37.2,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-05-17T00:00:00Z",
+    "description": "A path traversal vulnerability exists in setuptools prior to version 78.1.1, affecting the `PackageIndex` component. This security issue allows an attacker to write files to arbitrary locations on the filesystem using the permissions of the Python process. Depending on the specific context, this vulnerability could potentially lead to remote code execution. Users are advised to upgrade to version 78.1.1, which resolves the security problem and prevents unauthorized file writing.",
+    "affected": {
+      "pypa": [
+        {
+          "product": "setuptools",
+          "affected_versions": [
+            "< 78.1.1"
+          ],
+          "fixed_versions": []
+        }
+      ],
+      "Python": [
+        {
+          "product": "Setuptools",
+          "affected_versions": [
+            "before 78.1.1"
+          ],
+          "fixed_versions": [
+            "78.1.1"
+          ]
+        },
+        {
+          "product": "Setuptools",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ],
+      "Debian": [
+        {
+          "product": "Debian linux",
+          "affected_versions": [],
+          "fixed_versions": []
+        },
+        {
+          "product": "Debian linux 11.0",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ],
+      "Pypa": [
+        {
+          "product": "Setuptools",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://github.com/pypa/setuptools/security/advisories/GHSA-5rjg-fvgr-3xxf",
+      "https://github.com/pypa/setuptools/issues/4946",
+      "https://github.com/pypa/setuptools/commit/250a6d17978f9f6ac3ac887091f2d32886fbbb0b",
+      "https://github.com/pypa/setuptools/blob/6ead555c5fb29bc57fe6105b1bffc163f56fd558/setuptools/package_index.py#L810C1-L825C88",
+      "https://lists.debian.org/debian-lts-announce/2025/05/msg00035.html",
+      "https://cwe.mitre.org/data/definitions/22.html",
+      "https://nvd.nist.gov",
+      "https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1105970",
+      "https://github.com/Scrollwarden/heatcore-project",
+      "https://www.first.org/epss",
+      "https://alas.aws.amazon.com/AL2/ALAS2-2025-2876.html"
+    ],
+    "exploit": [
+      "https://github.com/pypa/setuptools/issues/4946",
+      "https://github.com/pypa/setuptools/security/advisories/GHSA-5rjg-fvgr-3xxf",
+      "https://github.com/Scrollwarden/heatcore-project",
+      "https://github.com/GadziorWTH/zadanie1",
+      "https://github.com/cheshie/code-analysis",
+      "https://github.com/JuhLima89/Exercicios",
+      "https://github.com/marSanGal/health-check-backend",
+      "https://github.com/edemirtoldo/diferentes-formas-criar-imagens-container",
+      "https://github.com/mikeholownych/mcp-core",
+      "https://github.com/vamshiarkala/devsecops-lab",
+      "https://github.com/MyCompanyOrganization/exploint",
+      "https://github.com/matliv/exploint"
+    ],
+    "priority_score": 9.12,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-22871",
+    "cwe": null,
+    "cvss": 9.1,
+    "epss": 7.8,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-04-08T00:00:00Z",
+    "description": "The net/http package accepted data in the chunked transfer encoding containing an invalid chunk-size line terminated by a bare LF. When used in conjunction with a server or proxy which incorrectly interprets a bare LF in a chunk extension as part of the extension, this could permit request smuggling. (CVE-2025-22871)\ngolang-jwt is a Go implementation of JSON Web Tokens. before 5.2.2 and 4.5.2, the function parse.ParseUnverified splits (via a call to strings.Split) its argument (which is untrusted data) on periods. As a result, in the face of a malicious request whose Authorization header consists of Bearer  followed by many period characters, a call to that function incurs allocations to the tune of O(n) bytes (where n stands for the length of the function's argument), with a constant factor of about 16. This issue is fixed in 5.2.2 and 4.5.2. (CVE-2025-30204)",
+    "affected": {
+      "Go standard library": [
+        {
+          "product": "net/http/internal",
+          "affected_versions": [
+            "0",
+            "1.24.0-0"
+          ],
+          "fixed_versions": []
+        }
+      ],
+      "Go": [
+        {
+          "product": "Standard library net/http/internal",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://go.dev/cl/652998",
+      "https://go.dev/issue/71988",
+      "https://groups.google.com/g/golang-announce/c/Y2uBTVKjBQk",
+      "https://pkg.go.dev/vuln/GO-2025-3563",
+      "http://www.openwall.com/lists/oss-security/2025/04/04/4",
+      "https://nvd.nist.gov",
+      "https://seclists.org/oss-sec/2025/q2/15",
+      "https://github.com/nlamirault/e2c",
+      "https://www.first.org/epss",
+      "https://alas.aws.amazon.com/AL2023/ALAS-2025-945.html"
+    ],
+    "exploit": [
+      "https://github.com/HB313/WIK-DPS-TP02",
+      "https://github.com/navikt/reops-ollama",
+      "https://github.com/nitishmalang/DevOps-Intern-Assignment-Nginx-Reverse-Proxy-Docker",
+      "https://github.com/kubexorg/deployer",
+      "https://github.com/nlamirault/e2c",
+      "https://github.com/nitishmalang/DevOps-Assignment-Nginx-Reverse-Proxy-Docker",
+      "https://github.com/flavio/sbom-merger",
+      "https://vulmon.com/exploitdetails?qidtp=maillist_oss_security&qid=6bb8d8a96007b4fff3b90a284f1f3e10"
+    ],
+    "priority_score": 8.23,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  },
+  {
+    "cve_id": "CVE-2025-68460",
+    "cwe": "Improper Encoding or Escaping of Output",
+    "cvss": 7.2,
+    "epss": 17.1,
+    "lifecycle": "Exploitation available",
+    "date_published": "2025-12-18T00:00:00Z",
+    "description": "Roundcube Webmail versions before 1.5.12 and versions in the 1.6 series before 1.6.12 have a security weakness in its HTML style sanitizer. This vulnerability could potentially allow an attacker to disclose sensitive information through improper handling of style attributes during HTML processing.",
+    "affected": {
+      "Roundcube": [
+        {
+          "product": "Webmail",
+          "affected_versions": [
+            "0",
+            "1.6.0"
+          ],
+          "fixed_versions": []
+        },
+        {
+          "product": "Webmail",
+          "affected_versions": [],
+          "fixed_versions": []
+        }
+      ]
+    },
+    "urls": [
+      "https://roundcube.net/news/2025/12/13/security-updates-1.6.12-and-1.5.12",
+      "https://github.com/roundcube/roundcubemail/commit/08de250fba731b634bed188bbe18d2f6ef3c7571",
+      "https://cwe.mitre.org/data/definitions/116.html",
+      "https://nvd.nist.gov",
+      "https://seclists.org/oss-sec/2025/q4/293",
+      "https://www.first.org/epss"
+    ],
+    "exploit": [
+      "https://vulmon.com/exploitdetails?qidtp=maillist_oss_security&qid=2c69f9e2939ff7fda3bf6dece4a50d47"
+    ],
+    "priority_score": 8.51,
+    "sources": [
+      "cveorg",
+      "nvd",
+      "wiz",
+      "vulmon"
+    ]
+  }
+]

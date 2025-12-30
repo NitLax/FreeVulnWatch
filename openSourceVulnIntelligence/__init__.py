@@ -28,7 +28,8 @@ __all__ = [
 def get_vulnerability(
     cve_id: str,
     scrapers: Optional[List[str]] = None,
-    use_cache: bool = True
+    use_cache: bool = True,
+    verbose: bool = False
 ) -> Vulnerability:
     """
     Get vulnerability information for a CVE.
@@ -75,13 +76,15 @@ def get_vulnerability(
         if cache:
             cached_data = cache.get(cache_key)
             if cached_data:
-                print(f"[{scraper_name}] Using cached data for {cve_id}")
+                if verbose:
+                    print(f"[{scraper_name}] Using cached data for {cve_id}")
                 vuln.merge_data(cached_data, source=scraper_name)
                 continue
         
         # Scrape
-        print(f"[{scraper_name}] Scraping {cve_id}...")
-        data = scraper.scrape_safe(cve_id)
+        if verbose:
+            print(f"[{scraper_name}] Scraping {cve_id}...")
+        data = scraper.scrape_safe(cve_id, verbose=verbose)
         
         if data:
             vuln.merge_data(data, source=scraper_name)
@@ -96,7 +99,8 @@ def get_vulnerability(
 def get_vulnerabilities(
     cve_ids: List[str],
     scrapers: Optional[List[str]] = None,
-    use_cache: bool = True
+    use_cache: bool = True,
+    verbose: bool = False
 ) -> List[Vulnerability]:
     """
     Get vulnerability information for multiple CVEs.
@@ -118,9 +122,10 @@ def get_vulnerabilities(
     
     for cve_id in cve_ids:
         try:
-            vuln = get_vulnerability(cve_id, scrapers=scrapers, use_cache=use_cache)
+            vuln = get_vulnerability(cve_id, scrapers=scrapers, use_cache=use_cache, verbose=verbose)
             vulnerabilities.append(vuln)
         except Exception as e:
-            print(f"Error processing {cve_id}: {e}")
+            if verbose:
+                print(f"Error processing {cve_id}: {e}")
     
     return vulnerabilities

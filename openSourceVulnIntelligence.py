@@ -139,7 +139,7 @@ Examples:
     # File input
     parser.add_argument(
         '--file', '-f',
-        help='File containing CVE IDs (one per line, supports comments with #)'
+        help='File containing CVE IDs'
     )
     
     # Output options
@@ -171,12 +171,20 @@ Examples:
     )
     
     parser.add_argument(
+        '--quiet', '-q',
+        action='store_true',
+        help='Reduce informational output'
+    )
+    
+    parser.add_argument(
         '--clear-cache',
         action='store_true',
         help='Clear all cached data'
     )
     
-    args = parser.parse_args()
+    args = parser.parse_argument_list() if hasattr(parser, 'parse_argument_list') else parser.parse_args()
+    
+    verbose = not args.quiet
     
     # Handle cache clearing
     if args.clear_cache:
@@ -227,7 +235,8 @@ Examples:
             vulnerabilities = get_vulnerabilities(
                 cve_ids,
                 scrapers=scrapers,
-                use_cache=not args.no_cache
+                use_cache=not args.no_cache,
+                verbose=verbose
             )
             
             # Display or save results
@@ -242,7 +251,8 @@ Examples:
             vuln = get_vulnerability(
                 args.cve_id,
                 scrapers=scrapers,
-                use_cache=not args.no_cache
+                use_cache=not args.no_cache,
+                verbose=verbose
             )
             
             # Display or save results

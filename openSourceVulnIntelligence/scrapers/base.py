@@ -87,12 +87,13 @@ class BaseScraper(ABC):
         
         self._last_request_time = time.time()
     
-    def scrape_safe(self, cve_id: str) -> Optional[Dict[str, Any]]:
+    def scrape_safe(self, cve_id: str, verbose: bool = True) -> Optional[Dict[str, Any]]:
         """
         Scrape with error handling and rate limiting.
         
         Args:
             cve_id: CVE identifier
+            verbose: Whether to print error messages (default: True for backward compatibility at this level)
             
         Returns:
             Vulnerability data or None if scraping failed
@@ -101,7 +102,8 @@ class BaseScraper(ABC):
             self._rate_limit()
             return self.scrape(cve_id)
         except Exception as e:
-            print(f"[{self.get_name()}] Error scraping {cve_id}: {e}")
+            if verbose:
+                print(f"[{self.get_name()}] Error scraping {cve_id}: {e}")
             return None
     
     def __repr__(self) -> str:

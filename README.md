@@ -28,8 +28,11 @@ pip install -r requirements.txt
 ```python
 from openSourceVulnIntelligence import get_vulnerability
 
-# Get vulnerability data
+# Get vulnerability data (silent by default)
 vuln = get_vulnerability("CVE-2024-1234")
+
+# Enable verbose logging
+vuln = get_vulnerability("CVE-2024-1234", verbose=True)
 
 # Display information
 print(vuln.display())
@@ -64,6 +67,9 @@ python openSourceVulnIntelligence.py --file cve_list.txt --output report.csv --f
 # Disable caching
 python openSourceVulnIntelligence.py CVE-2024-1234 --no-cache
 
+# Quiet mode (suppress "Scraping..." and "Using cached data..." logs)
+python openSourceVulnIntelligence.py CVE-2024-1234 --quiet
+
 # Clear cache
 python openSourceVulnIntelligence.py --clear-cache
 ```
@@ -78,6 +84,7 @@ python openSourceVulnIntelligence.py --clear-cache
 | `--format` | | Output format: `text`, `json`, `csv`, or `markdown`. | `text` |
 | `--scrapers` | `-s` | Space or comma-separated list of scrapers to use. | All available |
 | `--no-cache` | | Disable reading from and writing to the local cache. | `False` |
+| `--quiet` | `-q` | Reduce informational output (e.g., "Scraping..." messages). | `False` |
 | `--clear-cache` | | Delete all locally cached vulnerability data and exit. | `False` |
 
 ### Available Scraper Codenames
@@ -165,8 +172,8 @@ openSourceVulnIntelligence/
 
 ### Main Functions
 
-- `get_vulnerability(cve_id, scrapers=None, use_cache=True)` - Get single vulnerability
-- `get_vulnerabilities(cve_ids, scrapers=None, use_cache=True)` - Get multiple vulnerabilities
+- `get_vulnerability(cve_id, scrapers=None, use_cache=True, verbose=False)` - Get single vulnerability
+- `get_vulnerabilities(cve_ids, scrapers=None, use_cache=True, verbose=False)` - Get multiple vulnerabilities
 - `get_registry()` - Get scraper registry
 - `get_cache()` - Get cache instance
 
