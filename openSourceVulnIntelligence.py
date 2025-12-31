@@ -57,7 +57,7 @@ def display_vulnerability(vuln, format_type: str = "text"):
             for exploit_url in vuln.exploit[:3]:  # Show first 3
                 print(f"  - {exploit_url}")
         
-        print(f"\nPriority Score: {vuln.calculate_priority_score()}/10")
+        print(f"\nPriority Score: {vuln.calculate_priority_score()}/100")
         print()
     
     elif format_type == "json":
