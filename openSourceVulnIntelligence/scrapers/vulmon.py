@@ -117,8 +117,8 @@ class VulmonScraper(BaseScraper):
                         else:
                             vendor, product = "Unknown", product_text
                         
-                        vendor = vendor.strip().capitalize()
-                        product = product.strip().capitalize()
+                        vendor = vendor.strip()
+                        product = product.strip()
                         
                         item = {
                             'product': product,
