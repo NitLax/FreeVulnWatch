@@ -4,7 +4,7 @@ openSourceVulnIntelligence - Open Source Vulnerability Intelligence Module
 A Python module for gathering vulnerability intelligence from multiple sources.
 """
 from .vulnerability import Vulnerability
-from .scrapers import get_registry, CVEOrgScraper, NVDScraper, WizScraper
+from .scrapers import get_registry, CVEOrgScraper, NVDScraper, WizScraper, VulmonScraper, CVEFeedScraper
 from .cache import get_cache
 from .utils import read_cves_from_file, extract_cves_from_text
 from typing import List, Optional
@@ -20,6 +20,8 @@ __all__ = [
     'CVEOrgScraper',
     'NVDScraper',
     'WizScraper',
+    'VulmonScraper',
+    'CVEFeedScraper',
     'read_cves_from_file',
     'extract_cves_from_text'
 ]

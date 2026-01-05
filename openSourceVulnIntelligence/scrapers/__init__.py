@@ -9,6 +9,7 @@ from .cveorg import CVEOrgScraper
 from .nvd import NVDScraper
 from .wiz import WizScraper
 from .vulmon import VulmonScraper
+from .cvefeed import CVEFeedScraper
 
 __all__ = [
     'BaseScraper',
@@ -18,5 +19,6 @@ __all__ = [
     'CVEOrgScraper',
     'NVDScraper',
     'WizScraper',
-    'VulmonScraper'
+    'VulmonScraper',
+    'CVEFeedScraper'
 ]
