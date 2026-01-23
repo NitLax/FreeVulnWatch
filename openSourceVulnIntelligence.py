@@ -79,7 +79,7 @@ def save_results(vulnerabilities: List, output_file: str, format_type: str):
     
     elif format_type == "csv":
         with open(output_path, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
+            writer = csv.writer(f, quoting=csv.QUOTE_ALL)
             # Header
             writer.writerow([
                 'CVE ID', 'CWE', 'CVSS', 'EPSS', 'Lifecycle',

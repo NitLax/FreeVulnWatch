@@ -22,10 +22,25 @@ class VulmonScraper(BaseScraper):
     def scrape(self, cve_id: str) -> Dict[str, Any]:
         """Scrape Vulmon."""
         url = f"https://vulmon.com/vulnerabilitydetails?qid={cve_id}"
-        response = requests.get(url, timeout=15,verify=False)
-        response.raise_for_status()
         
-        return self._parse_html(response.text, cve_id)
+        # Add headers to avoid bot detection
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        
+        try:
+            response = requests.get(url, headers=headers, timeout=15, verify=False)
+            response.raise_for_status()
+            
+            # Check if we got a valid response
+            if not response.text or len(response.text) < 100:
+                print(f"[vulmon] Warning: Empty or very short response for {cve_id}")
+                return {'cve_id': cve_id}
+            
+            return self._parse_html(response.text, cve_id)
+        except requests.exceptions.RequestException as e:
+            print(f"[vulmon] Error scraping {cve_id}: {e}")
+            return {'cve_id': cve_id}
     
     def _parse_html(self, html_content: str, cve_id: str) -> Dict[str, Any]:
         """Parse Vulmon HTML content."""
