@@ -49,6 +49,10 @@ class CVEFeedScraper(BaseScraper):
         
         date_published = self._extract_date_published(soup)
         
+        affected = self._extract_affected(soup)
+        # Extract solutions and update fixed_versions in affected products
+        self._extract_solutions(soup, affected)
+        
         return {
             'cve_id': self._extract_cve_id(soup, cve_id),
             'cwe': self._extract_cwe(soup),
@@ -57,7 +61,7 @@ class CVEFeedScraper(BaseScraper):
             'lifecycle': self._extract_lifecycle(soup, date_published),
             'date_published': date_published,
             'description': self._extract_description(soup),
-            'affected': self._extract_affected(soup),
+            'affected': affected,
             'urls': self._extract_urls(soup),
             'exploit': self._extract_exploits(soup)
         }
@@ -228,3 +232,81 @@ class CVEFeedScraper(BaseScraper):
                                     exploits.append(href)
         
         return exploits
+
+    def _extract_solutions(self, soup: BeautifulSoup, affected: Dict[str, List[Dict]]) -> None:
+        """Extract solution information and update fixed_versions in affected products."""
+        if not affected:
+            return
+        
+        # Find the Solution section - look for any heading containing "Solution"
+        solution_header = soup.find(lambda tag: tag.name in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] and 
+                                     tag.get_text() and 'solution' in tag.get_text().lower())
+        if not solution_header:
+            return
+        
+        # Get the card containing solutions
+        card = solution_header.find_parent('div', class_='card')
+        if not card:
+            return
+        
+        # Find the card-body that contains the solution list
+        card_body = card.find('div', class_='card-body')
+        if not card_body:
+            return
+        
+        # Find solution items - they're in an unordered list
+        solution_list = card_body.find('ul')
+        if not solution_list:
+            return
+        
+        solution_items = solution_list.find_all('li')
+        if not solution_items:
+            return
+        
+        # Process each solution item
+        for item in solution_items:
+            solution_text = item.get_text().strip().lower()
+            
+            # Check if "version" is mentioned
+            if 'version' not in solution_text:
+                continue
+            
+            # Try to match products and extract version info
+            for vendor, products in affected.items():
+                for product_info in products:
+                    product_name = product_info.get('product', '').lower()
+                    if not product_name:
+                        continue
+                    
+                    # Check if product name appears in solution
+                    if product_name in solution_text:
+                        # Check for "latest" keyword
+                        if 'latest' in solution_text:
+                            if 'latest' not in product_info['fixed_versions']:
+                                product_info['fixed_versions'].append('latest')
+                        else:
+                            # Try to extract version numbers
+                            # Pattern: "later than X.Y" or "version X.Y.Z" or "vX.Y.Z" or "X.Y.Z"
+                            version_patterns = [
+                                (r'later\s+than\s+([\d]+(?:\.[\d]+)+)', True),  # (pattern, is_greater_than)
+                                (r'version\s+([\d]+(?:\.[\d]+)+)', False),
+                                (r'\bv([\d]+(?:\.[\d]+)+)', False),
+                                (r'\b([\d]+\.[\d]+(?:\.[\d]+)?)\b', False)
+                            ]
+                            
+                            for pattern, is_greater_than in version_patterns:
+                                matches = re.findall(pattern, solution_text)
+                                for version in matches:
+                                    # Basic validation: version should have at least one dot
+                                    if '.' in version:
+                                        # If it says "later than X.Y", add ">X.Y"
+                                        if is_greater_than:
+                                            version_str = f">{version}"
+                                        else:
+                                            version_str = version
+                                        
+                                        if version_str not in product_info['fixed_versions']:
+                                            product_info['fixed_versions'].append(version_str)
+                                        break  # Only take first match per pattern
+                                if product_info['fixed_versions']:  # If we found a version, stop
+                                    break
